@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'dashboard' }) %>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Operations dashboard</p>
+            <h1>Welcome back, <%= user.name %></h1>
+          </div>
+          <div class="topbar-actions">
+            <a class="btn btn-secondary" href="/logout">Logout</a>
+          </div>
+        </header>
+
+        <section class="hero-card">
+          <div>
+            <p class="eyebrow">Daily overview</p>
+            <h2>Care delivery is running smoothly.</h2>
+            <p>
+              Monitor appointments, patient flow, and staffing in one secure
+              command center.
+            </p>
+          </div>
+          <div class="hero-pill">Live • 12:30 PM</div>
+        </section>
+
+        <% if (typeof dbMessage !== 'undefined' && dbMessage) { %>
+          <div class="alert-box"><strong>Database note</strong><p><%= dbMessage %></p></div>
+        <% } %>
+
+        <section class="stats-grid">
+          <article class="stat-card primary">
+            <p>Total Patients</p>
+            <strong>1,248</strong>
+          </article>
+          <article class="stat-card success">
+            <p>Today's Appointments</p>
+            <strong>37</strong>
+          </article>
+          <article class="stat-card info">
+            <p>Doctors on Duty</p>
+            <strong>24</strong>
+          </article>
+          <article class="stat-card warning">
+            <p>Revenue This Month</p>
+            <strong>$48,920</strong>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Recent Patients</h3>
+              <a href="/patients">View all</a>
+            </div>
+            <ul class="activity-list">
+              <% patients.forEach((patient) => { %>
+                <li><span><%= patient.full_name %></span><small><%= patient.phone || 'No phone on file' %></small></li>
+              <% }) %>
+            </ul>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Upcoming Appointments</h3>
+              <a href="/appointments">Manage</a>
+            </div>
+            <ul class="activity-list">
+              <% appointments.forEach((appointment) => { %>
+                <li><span><%= appointment.patient_name %></span><small><%= appointment.doctor_name %> • <%= appointment.status %></small></li>
+              <% }) %>
+            </ul>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="/js/app.js"></script>
+  </body>
+</html>

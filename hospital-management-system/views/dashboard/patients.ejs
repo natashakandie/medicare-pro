@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'patients' }) %>
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Patient records</p>
+            <h1>Patient Directory</h1>
+          </div>
+          <a class="btn btn-primary" href="/dashboard">Back to dashboard</a>
+        </header>
+
+        <section class="hero-card">
+          <div>
+            <h2>Manage admissions and care records</h2>
+            <p>Patient information is now backed by the hospital database schema.</p>
+          </div>
+          <div class="hero-pill">Live data</div>
+        </section>
+
+        <% if (successMessage) { %>
+          <div class="alert-box"><strong>Success</strong><p><%= successMessage %></p></div>
+        <% } %>
+
+        <section class="form-card">
+          <div class="panel-header">
+            <h3>Add new patient</h3>
+          </div>
+          <form class="form-grid" method="POST" action="/patients">
+            <label class="full-width">Full name<input name="full_name" required /></label>
+            <label>Date of birth<input type="date" name="date_of_birth" /></label>
+            <label>Gender<select name="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></label>
+            <label>Phone<input name="phone" /></label>
+            <label>Email<input type="email" name="email" /></label>
+            <label>Blood group<input name="blood_group" /></label>
+            <label class="full-width">Address<textarea name="address" rows="2"></textarea></label>
+            <label>Allergies<textarea name="allergies" rows="2"></textarea></label>
+            <label>Emergency contact<textarea name="emergency_contact" rows="2"></textarea></label>
+            <div class="form-actions full-width">
+              <button class="btn btn-primary" type="submit">Save patient</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Recent patients</h3>
+            <span class="badge"><%= patients.length %> records</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Blood Group</th>
+                <th>Emergency Contact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% patients.forEach((patient) => { %>
+                <tr>
+                  <td><%= patient.full_name %></td>
+                  <td><%= patient.phone || '—' %></td>
+                  <td><%= patient.blood_group || '—' %></td>
+                  <td><%= patient.emergency_contact || '—' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

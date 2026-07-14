@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <img
+            class="brand-logo"
+            src="/images/medicore-logo.svg"
+            alt="MediCore Pro logo"
+          />
+          <div>
+            <h2>MediCore Pro</h2>
+            <p>Secure hospital access portal</p>
+          </div>
+        </div>
+
+        <h3>Welcome back</h3>
+        <p class="auth-copy">Sign in to continue managing care operations.</p>
+
+        <form action="/login" method="POST" class="auth-form">
+          <label>Email address</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="name@hospital.com"
+            required
+          />
+
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="••••••••"
+            required
+          />
+
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+
+        <p class="auth-footer">
+          New to the platform? Contact your administrator for access.
+        </p>
+      </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+  </body>
+</html>

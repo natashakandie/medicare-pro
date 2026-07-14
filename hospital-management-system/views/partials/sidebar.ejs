@@ -1,0 +1,40 @@
+<aside class="sidebar">
+  <div class="brand-block">
+    <img
+      class="brand-logo"
+      src="/images/medicore-logo.svg"
+      alt="MediCore Pro logo"
+    />
+    <div>
+      <h3>MediCore Pro</h3>
+      <p>Hospital Command Center</p>
+    </div>
+  </div>
+
+  <nav class="nav-links">
+    <a
+      class="<%= currentPage === 'dashboard' ? 'active' : '' %>"
+      href="/dashboard"
+      >Overview</a
+    >
+    <a
+      class="<%= currentPage === 'patients' ? 'active' : '' %>"
+      href="/patients"
+      >Patients</a
+    >
+    <a
+      class="<%= currentPage === 'appointments' ? 'active' : '' %>"
+      href="/appointments"
+      >Appointments</a
+    >
+    <a href="#">Doctors</a>
+    <a href="#">Records</a>
+    <a href="#">Billing</a>
+  </nav>
+
+  <div class="sidebar-card">
+    <p>System status</p>
+    <strong>Operational</strong>
+    <small>Secure care monitoring active</small>
+  </div>
+</aside>

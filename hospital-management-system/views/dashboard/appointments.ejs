@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'appointments' }) %>
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Appointments</p>
+            <h1>Schedule Overview</h1>
+          </div>
+          <a class="btn btn-primary" href="/dashboard">Back to dashboard</a>
+        </header>
+
+        <section class="hero-card">
+          <div>
+            <h2>Coordinate visits and follow-ups</h2>
+            <p>The appointment system is now laid out with database-backed records.</p>
+          </div>
+          <div class="hero-pill">Upcoming</div>
+        </section>
+
+        <% if (successMessage) { %>
+          <div class="alert-box"><strong>Success</strong><p><%= successMessage %></p></div>
+        <% } %>
+
+        <section class="form-card">
+          <div class="panel-header">
+            <h3>Book appointment</h3>
+          </div>
+          <form class="form-grid" method="POST" action="/appointments">
+            <label>Patient<select name="patient_id" required>
+              <option value="">Select patient</option>
+              <% patients.forEach((patient) => { %>
+                <option value="<%= patient.id %>"><%= patient.full_name %></option>
+              <% }) %>
+            </select></label>
+            <label>Doctor<select name="doctor_id" required>
+              <option value="">Select doctor</option>
+              <% doctors.forEach((doctor) => { %>
+                <option value="<%= doctor.id %>"><%= doctor.full_name %></option>
+              <% }) %>
+            </select></label>
+            <label>Appointment date<input type="datetime-local" name="appointment_date" required /></label>
+            <label>Status<select name="status"><option value="scheduled">Scheduled</option><option value="confirmed">Confirmed</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></label>
+            <label class="full-width">Reason<textarea name="reason" rows="2"></textarea></label>
+            <label class="full-width">Notes<textarea name="notes" rows="2"></textarea></label>
+            <div class="form-actions full-width">
+              <button class="btn btn-primary" type="submit">Book appointment</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Appointments</h3>
+            <span class="badge"><%= appointments.length %> entries</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% appointments.forEach((appointment) => { %>
+                <tr>
+                  <td><%= appointment.patient_name %></td>
+                  <td><%= appointment.doctor_name %></td>
+                  <td><%= appointment.appointment_date %></td>
+                  <td><span class="status-pill"><%= appointment.status %></span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
