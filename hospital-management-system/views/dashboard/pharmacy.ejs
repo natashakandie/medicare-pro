@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'pharmacy', user }) %>
+      <main class="main-content">
+        <header class="topbar">
+          <div><p class="eyebrow">Pharmacy</p><h1>Medicine Inventory</h1></div>
+          <form method="POST" action="/pharmacy/dispense"><button class="btn btn-primary" type="submit">Dispense prescription</button></form>
+        </header>
+        <% if (successMessage) { %><div class="alert-box"><strong>Success</strong><p><%= successMessage %></p></div><% } %>
+        <section class="panel">
+          <div class="panel-header"><h3>Stock catalog</h3><span class="badge"><%= medicines.length %> medicines</span></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Generic</th><th>Form</th><th>Stock</th><th>Unit price</th><th>Expiry</th><th>Alert</th></tr></thead>
+              <tbody>
+                <% medicines.forEach((medicine) => { %>
+                  <tr>
+                    <td><%= medicine.name %></td>
+                    <td><%= medicine.generic_name %></td>
+                    <td><%= medicine.dosage_form %></td>
+                    <td><%= medicine.stock_quantity %></td>
+                    <td>KES <%= medicine.unit_price %></td>
+                    <td><%= medicine.expiry_date %></td>
+                    <td><span class="status-pill <%= medicine.stock_quantity <= medicine.reorder_level ? 'danger' : '' %>"><%= medicine.stock_quantity <= medicine.reorder_level ? 'Low stock' : 'OK' %></span></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

@@ -65,26 +65,32 @@
             <h3>Appointments</h3>
             <span class="badge"><%= appointments.length %> entries</span>
           </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Patient</th>
-                <th>Doctor</th>
-                <th>Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% appointments.forEach((appointment) => { %>
-                <tr>
-                  <td><%= appointment.patient_name %></td>
-                  <td><%= appointment.doctor_name %></td>
-                  <td><%= appointment.appointment_date %></td>
-                  <td><span class="status-pill"><%= appointment.status %></span></td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
+          <% if (appointments.length) { %>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% appointments.forEach((appointment) => { %>
+                    <tr>
+                      <td><%= appointment.patient_name %></td>
+                      <td><%= appointment.doctor_name %></td>
+                      <td><%= appointment.appointment_date %></td>
+                      <td><span class="status-pill"><%= appointment.status %></span></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <p class="empty-state">No appointments found. Add patients and doctors before booking.</p>
+          <% } %>
         </section>
       </main>
     </div>

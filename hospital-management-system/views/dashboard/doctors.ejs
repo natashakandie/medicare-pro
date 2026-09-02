@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'doctors' }) %>
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Clinical staff</p>
+            <h1>Doctors</h1>
+          </div>
+          <a class="btn btn-primary" href="/dashboard">Back to dashboard</a>
+        </header>
+
+        <section class="hero-card">
+          <div>
+            <h2>Manage care teams and specialties</h2>
+            <p>Keep doctor contacts and specialties ready for appointment scheduling.</p>
+          </div>
+          <div class="hero-pill">Staff directory</div>
+        </section>
+
+        <% if (successMessage) { %>
+          <div class="alert-box"><strong>Notice</strong><p><%= successMessage %></p></div>
+        <% } %>
+
+        <section class="form-card">
+          <div class="panel-header">
+            <h3>Add doctor</h3>
+          </div>
+          <form class="form-grid" method="POST" action="/doctors">
+            <label>Full name<input name="full_name" required /></label>
+            <label>Specialty<input name="specialty" required /></label>
+            <label>Phone<input name="phone" /></label>
+            <label>Email<input type="email" name="email" /></label>
+            <div class="form-actions full-width">
+              <button class="btn btn-primary" type="submit">Save doctor</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Doctor directory</h3>
+            <span class="badge"><%= doctors.length %> records</span>
+          </div>
+          <% if (doctors.length) { %>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Specialty</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% doctors.forEach((doctor) => { %>
+                    <tr>
+                      <td><%= doctor.full_name %></td>
+                      <td><%= doctor.specialty || '-' %></td>
+                      <td><%= doctor.phone || '-' %></td>
+                      <td><%= doctor.email || '-' %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <p class="empty-state">No doctors found. Add a doctor once the database is connected.</p>
+          <% } %>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

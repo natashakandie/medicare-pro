@@ -1,3 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('Hospital Management System loaded');
+document.addEventListener("DOMContentLoaded", () => {
+  console.log(
+    "🏥 MediCore Pro - Hospital Management System loaded successfully!",
+  );
 });

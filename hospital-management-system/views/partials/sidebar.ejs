@@ -27,13 +27,40 @@
       href="/appointments"
       >Appointments</a
     >
-    <a href="#">Doctors</a>
-    <a href="#">Records</a>
-    <a href="#">Billing</a>
+    <a
+      class="<%= currentPage === 'doctors' ? 'active' : '' %>"
+      href="/doctors"
+      >Doctors</a
+    >
+    <a
+      class="<%= currentPage === 'pharmacy' ? 'active' : '' %>"
+      href="/pharmacy"
+      >Pharmacy</a
+    >
+    <a
+      class="<%= currentPage === 'billing' ? 'active' : '' %>"
+      href="/billing"
+      >Billing</a
+    >
+    <a
+      class="<%= currentPage === 'reports' ? 'active' : '' %>"
+      href="/reports"
+      >Reports</a
+    >
+    <a
+      class="<%= currentPage === 'notifications' ? 'active' : '' %>"
+      href="/notifications"
+      >Notifications</a
+    >
+    <a
+      class="<%= currentPage === 'settings' ? 'active' : '' %>"
+      href="/settings"
+      >Settings</a
+    >
   </nav>
 
   <div class="sidebar-card">
-    <p>System status</p>
+    <p><%= typeof user !== 'undefined' ? user.role : 'Admin' %> workspace</p>
     <strong>Operational</strong>
     <small>Secure care monitoring active</small>
   </div>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'patients', user }) %>
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Electronic medical record</p>
+            <h1><%= patient.full_name %></h1>
+          </div>
+          <a class="btn btn-secondary" href="/patients">Back to patients</a>
+        </header>
+
+        <section class="profile-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Patient profile</h3>
+              <span class="badge"><%= patient.patient_code %></span>
+            </div>
+            <dl class="detail-list">
+              <div><dt>Date of birth</dt><dd><%= patient.date_of_birth || '-' %></dd></div>
+              <div><dt>Gender</dt><dd><%= patient.gender || '-' %></dd></div>
+              <div><dt>Blood group</dt><dd><%= patient.blood_group || '-' %></dd></div>
+              <div><dt>Phone</dt><dd><%= patient.phone || '-' %></dd></div>
+              <div><dt>Emergency contact</dt><dd><%= patient.emergency_contact || '-' %></dd></div>
+              <div><dt>Allergies</dt><dd><%= patient.allergies || '-' %></dd></div>
+              <div><dt>History</dt><dd><%= patient.medical_history || '-' %></dd></div>
+            </dl>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Nurse vitals</h3>
+              <span class="status-pill">Latest</span>
+            </div>
+            <form class="form-grid compact-form">
+              <label>BP<input value="138/86" /></label>
+              <label>Temp<input value="36.9 C" /></label>
+              <label>Pulse<input value="78 bpm" /></label>
+              <label>Weight<input value="68 kg" /></label>
+            </form>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Visit notes and prescriptions</h3>
+              <span class="badge"><%= visits.length %> visits</span>
+            </div>
+            <ul class="activity-list">
+              <% visits.forEach((visit) => { %>
+                <li>
+                  <span><%= visit.date %> - <%= visit.doctor %></span>
+                  <small><%= visit.symptoms %> | <%= visit.diagnosis %></small>
+                  <p><%= visit.vitals %> | Prescription: <%= visit.prescription %></p>
+                </li>
+              <% }) %>
+            </ul>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Invoices</h3>
+              <a href="/billing">Billing</a>
+            </div>
+            <ul class="activity-list">
+              <% if (invoices.length) { %>
+                <% invoices.forEach((invoice) => { %>
+                  <li><span><%= invoice.invoice_code %></span><small>KES <%= invoice.total_amount %> &bull; <%= invoice.status %></small></li>
+                <% }) %>
+              <% } else { %>
+                <li class="empty-row">No invoices for this patient.</li>
+              <% } %>
+            </ul>
+          </article>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

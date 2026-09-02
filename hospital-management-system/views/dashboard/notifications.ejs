@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title><%= title %></title><link rel="stylesheet" href="/css/style.css" /></head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'notifications', user }) %>
+      <main class="main-content">
+        <header class="topbar"><div><p class="eyebrow">Notifications</p><h1>In-App Notification Center</h1></div></header>
+        <section class="panel">
+          <ul class="activity-list">
+            <% notifications.forEach((notification) => { %>
+              <li class="<%= notification.is_read ? 'read-row' : '' %>"><span><%= notification.title %></span><small><%= notification.message %> &bull; <%= notification.created_at %></small></li>
+            <% }) %>
+          </ul>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

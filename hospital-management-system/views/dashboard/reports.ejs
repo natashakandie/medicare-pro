@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'reports', user }) %>
+      <main class="main-content">
+        <header class="topbar"><div><p class="eyebrow">Analytics</p><h1>Reports Dashboard</h1></div></header>
+        <section class="stats-grid">
+          <article class="metric-card"><span>Revenue</span><strong>KES <%= invoices.reduce((sum, item) => sum + item.paid_amount, 0) %></strong></article>
+          <article class="metric-card"><span>Appointments</span><strong><%= appointments.length %></strong></article>
+          <article class="metric-card"><span>Top medicine</span><strong>Paracetamol</strong></article>
+          <article class="metric-card"><span>Low stock</span><strong><%= medicines.filter((item) => item.stock_quantity <= item.reorder_level).length %></strong></article>
+        </section>
+        <section class="chart-grid">
+          <article class="panel"><div class="panel-header"><h3>Appointments by status</h3></div><div class="bar-list"><div style="--value: 80%">Confirmed</div><div style="--value: 60%">Scheduled</div><div style="--value: 40%">Ongoing</div></div></article>
+          <article class="panel"><div class="panel-header"><h3>Pharmacy stock levels</h3></div><div class="bar-list"><% medicines.forEach((medicine) => { %><div style="--value: <%= Math.min(medicine.stock_quantity / 4, 100) %>%"><%= medicine.name %></div><% }) %></div></article>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

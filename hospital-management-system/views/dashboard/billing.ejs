@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'billing', user }) %>
+      <main class="main-content">
+        <header class="topbar">
+          <div><p class="eyebrow">Billing</p><h1>Invoices & Payments</h1></div>
+          <button class="btn btn-primary">Generate invoice</button>
+        </header>
+        <section class="panel">
+          <div class="panel-header"><h3>Invoice register</h3><span class="badge"><%= invoices.length %> invoices</span></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Invoice</th><th>Patient</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><th>PDF</th></tr></thead>
+              <tbody>
+                <% invoices.forEach((invoice) => { %>
+                  <tr>
+                    <td><%= invoice.invoice_code %></td>
+                    <td><%= invoice.patient_name %></td>
+                    <td>KES <%= invoice.total_amount %></td>
+                    <td>KES <%= invoice.paid_amount %></td>
+                    <td><%= invoice.due_date %></td>
+                    <td><span class="status-pill"><%= invoice.status %></span></td>
+                    <td><button class="btn btn-secondary">Print</button></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

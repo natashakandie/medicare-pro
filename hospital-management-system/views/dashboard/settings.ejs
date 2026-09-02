@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title><%= title %></title><link rel="stylesheet" href="/css/style.css" /></head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar', { currentPage: 'settings', user }) %>
+      <main class="main-content">
+        <header class="topbar"><div><p class="eyebrow">Account</p><h1>Settings</h1></div></header>
+        <section class="profile-grid">
+          <article class="panel">
+            <div class="panel-header"><h3>Profile</h3><span class="badge"><%= user.role %></span></div>
+            <form class="form-grid">
+              <label>Full name<input value="<%= user.name %>" /></label>
+              <label>Email<input value="<%= user.email %>" /></label>
+              <label>Session timeout<select><option>8 hours</option><option>30 minutes</option></select></label>
+              <label>Notifications<select><option>Enabled</option><option>Muted</option></select></label>
+            </form>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h3>Sample login accounts</h3></div>
+            <ul class="activity-list">
+              <li><span>admin@medicore.pro</span><small>Admin@123</small></li>
+              <li><span>doctor@medicore.pro</span><small>Doctor@123</small></li>
+              <li><span>nurse@medicore.pro</span><small>Nurse@123</small></li>
+              <li><span>pharmacy@medicore.pro</span><small>Pharmacy@123</small></li>
+            </ul>
+          </article>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

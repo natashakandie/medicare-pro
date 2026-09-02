@@ -36,7 +36,7 @@
               command center.
             </p>
           </div>
-          <div class="hero-pill">Live • 12:30 PM</div>
+          <div class="hero-pill">Live &bull; 12:30 PM</div>
         </section>
 
         <% if (typeof dbMessage !== 'undefined' && dbMessage) { %>
@@ -46,19 +46,19 @@
         <section class="stats-grid">
           <article class="stat-card primary">
             <p>Total Patients</p>
-            <strong>1,248</strong>
+            <strong><%= stats.totalPatients %></strong>
           </article>
           <article class="stat-card success">
             <p>Today's Appointments</p>
-            <strong>37</strong>
+            <strong><%= stats.todayAppointments %></strong>
           </article>
           <article class="stat-card info">
             <p>Doctors on Duty</p>
-            <strong>24</strong>
+            <strong><%= stats.doctorsOnDuty %></strong>
           </article>
           <article class="stat-card warning">
-            <p>Revenue This Month</p>
-            <strong>$48,920</strong>
+            <p>Pending Bills</p>
+            <strong><%= stats.pendingBills || 0 %></strong>
           </article>
         </section>
 
@@ -69,9 +69,13 @@
               <a href="/patients">View all</a>
             </div>
             <ul class="activity-list">
-              <% patients.forEach((patient) => { %>
-                <li><span><%= patient.full_name %></span><small><%= patient.phone || 'No phone on file' %></small></li>
-              <% }) %>
+              <% if (patients.length) { %>
+                <% patients.forEach((patient) => { %>
+                  <li><span><a href="/patients/<%= patient.id %>"><%= patient.full_name %></a></span><small><%= patient.phone || 'No phone on file' %> &bull; <%= patient.blood_group || 'No blood group' %></small></li>
+                <% }) %>
+              <% } else { %>
+                <li class="empty-row">No patient records found.</li>
+              <% } %>
             </ul>
           </article>
 
@@ -81,10 +85,33 @@
               <a href="/appointments">Manage</a>
             </div>
             <ul class="activity-list">
-              <% appointments.forEach((appointment) => { %>
-                <li><span><%= appointment.patient_name %></span><small><%= appointment.doctor_name %> • <%= appointment.status %></small></li>
-              <% }) %>
+              <% if (appointments.length) { %>
+                <% appointments.forEach((appointment) => { %>
+                  <li><span><%= appointment.patient_name %></span><small><%= appointment.doctor_name %> &bull; <%= appointment.status %></small></li>
+                <% }) %>
+              <% } else { %>
+                <li class="empty-row">No appointments scheduled.</li>
+              <% } %>
             </ul>
+          </article>
+        </section>
+
+        <section class="stats-grid secondary-stats">
+          <article class="metric-card">
+            <span>Appointments total</span>
+            <strong><%= stats.totalAppointments %></strong>
+          </article>
+          <article class="metric-card">
+            <span>Low-stock medicines</span>
+            <strong><%= stats.lowStock || 0 %></strong>
+          </article>
+          <article class="metric-card">
+            <span>Notifications</span>
+            <strong>3</strong>
+          </article>
+          <article class="metric-card">
+            <span>Sample roles</span>
+            <strong>6</strong>
           </article>
         </section>
       </main>

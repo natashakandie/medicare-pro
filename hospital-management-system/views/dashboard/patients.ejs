@@ -58,26 +58,32 @@
             <h3>Recent patients</h3>
             <span class="badge"><%= patients.length %> records</span>
           </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Blood Group</th>
-                <th>Emergency Contact</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% patients.forEach((patient) => { %>
-                <tr>
-                  <td><%= patient.full_name %></td>
-                  <td><%= patient.phone || '—' %></td>
-                  <td><%= patient.blood_group || '—' %></td>
-                  <td><%= patient.emergency_contact || '—' %></td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
+          <% if (patients.length) { %>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Blood Group</th>
+                    <th>Emergency Contact</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% patients.forEach((patient) => { %>
+                    <tr>
+                      <td><a href="/patients/<%= patient.id %>"><%= patient.full_name %></a></td>
+                      <td><%= patient.phone || '-' %></td>
+                      <td><%= patient.blood_group || '-' %></td>
+                      <td><%= patient.emergency_contact || '-' %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <p class="empty-state">No patients found. Add a patient once the database is connected.</p>
+          <% } %>
         </section>
       </main>
     </div>
