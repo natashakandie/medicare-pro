@@ -14,7 +14,7 @@
   </head>
   <body>
     <div class="page-shell">
-      <%- include('../partials/sidebar', { currentPage: 'dashboard' }) %>
+      <%- include('../partials/sidebar') %>
 
       <main class="main-content">
         <header class="topbar">
@@ -36,27 +36,29 @@
               command center.
             </p>
           </div>
-          <div class="hero-pill">Live &bull; 12:30 PM</div>
+          <div class="hero-pill">Signed in as <%= user.role %></div>
         </section>
 
-        <% if (typeof dbMessage !== 'undefined' && dbMessage) { %>
-          <div class="alert-box"><strong>Database note</strong><p><%= dbMessage %></p></div>
-        <% } %>
+        <%- include('../partials/alerts') %>
 
         <section class="stats-grid">
           <article class="stat-card primary">
+            <%- icon('patients') %>
             <p>Total Patients</p>
             <strong><%= stats.totalPatients %></strong>
           </article>
           <article class="stat-card success">
+            <%- icon('appointments') %>
             <p>Today's Appointments</p>
             <strong><%= stats.todayAppointments %></strong>
           </article>
           <article class="stat-card info">
+            <%- icon('doctors') %>
             <p>Doctors on Duty</p>
             <strong><%= stats.doctorsOnDuty %></strong>
           </article>
           <article class="stat-card warning">
+            <%- icon('billing') %>
             <p>Pending Bills</p>
             <strong><%= stats.pendingBills || 0 %></strong>
           </article>
@@ -71,7 +73,13 @@
             <ul class="activity-list">
               <% if (patients.length) { %>
                 <% patients.forEach((patient) => { %>
-                  <li><span><a href="/patients/<%= patient.id %>"><%= patient.full_name %></a></span><small><%= patient.phone || 'No phone on file' %> &bull; <%= patient.blood_group || 'No blood group' %></small></li>
+                  <li class="row-actions">
+                    <span class="avatar avatar-sm"><%= fmt.initials(patient.full_name) %></span>
+                    <div>
+                      <span><a href="/patients/<%= patient.id %>"><%= patient.full_name %></a></span>
+                      <small><%= patient.phone || 'No phone on file' %> &bull; <%= patient.blood_group || 'No blood group' %></small>
+                    </div>
+                  </li>
                 <% }) %>
               <% } else { %>
                 <li class="empty-row">No patient records found.</li>
@@ -87,7 +95,7 @@
             <ul class="activity-list">
               <% if (appointments.length) { %>
                 <% appointments.forEach((appointment) => { %>
-                  <li><span><%= appointment.patient_name %></span><small><%= appointment.doctor_name %> &bull; <%= appointment.status %></small></li>
+                  <li><span><%= appointment.patient_name %></span><small><%= appointment.doctor_name %> &bull; <span class="status-pill <%= appointment.status %>"><%= appointment.status %></span></small></li>
                 <% }) %>
               <% } else { %>
                 <li class="empty-row">No appointments scheduled.</li>
@@ -106,12 +114,12 @@
             <strong><%= stats.lowStock || 0 %></strong>
           </article>
           <article class="metric-card">
-            <span>Notifications</span>
-            <strong>3</strong>
+            <span>Unread notifications</span>
+            <strong><a href="/notifications"><%= stats.unreadNotifications || 0 %></a></strong>
           </article>
           <article class="metric-card">
-            <span>Sample roles</span>
-            <strong>6</strong>
+            <span>Your role</span>
+            <strong><%= user.role %></strong>
           </article>
         </section>
       </main>

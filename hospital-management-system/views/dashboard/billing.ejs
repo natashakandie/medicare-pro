@@ -8,27 +8,46 @@
   </head>
   <body>
     <div class="page-shell">
-      <%- include('../partials/sidebar', { currentPage: 'billing', user }) %>
+      <%- include('../partials/sidebar') %>
       <main class="main-content">
         <header class="topbar">
-          <div><p class="eyebrow">Billing</p><h1>Invoices & Payments</h1></div>
-          <button class="btn btn-primary">Generate invoice</button>
+          <div><p class="eyebrow">Billing</p><h1>Invoices &amp; Payments</h1></div>
         </header>
+
+        <%- include('../partials/alerts') %>
+
         <section class="panel">
           <div class="panel-header"><h3>Invoice register</h3><span class="badge"><%= invoices.length %> invoices</span></div>
           <div class="table-wrap">
             <table class="data-table">
-              <thead><tr><th>Invoice</th><th>Patient</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><th>PDF</th></tr></thead>
+              <thead><tr><th>Invoice</th><th>Patient</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><% if (typeof user !== 'undefined' && user && (user.role === 'Admin' || user.role === 'Receptionist')) { %><th>Record payment</th><% } %></tr></thead>
               <tbody>
                 <% invoices.forEach((invoice) => { %>
                   <tr>
                     <td><%= invoice.invoice_code %></td>
                     <td><%= invoice.patient_name %></td>
-                    <td>KES <%= invoice.total_amount %></td>
-                    <td>KES <%= invoice.paid_amount %></td>
-                    <td><%= invoice.due_date %></td>
-                    <td><span class="status-pill"><%= invoice.status %></span></td>
-                    <td><button class="btn btn-secondary">Print</button></td>
+                    <td><%= fmt.formatMoney(invoice.total_amount) %></td>
+                    <td><%= fmt.formatMoney(invoice.paid_amount) %></td>
+                    <td><%= fmt.formatDate(invoice.due_date) %></td>
+                    <td><span class="status-pill <%= invoice.status %>"><%= invoice.status %></span></td>
+                    <% if (typeof user !== 'undefined' && user && (user.role === 'Admin' || user.role === 'Receptionist')) { %>
+                    <td>
+                      <% if (invoice.status !== 'paid') { %>
+                        <form class="inline-form" method="POST" action="/billing/<%= invoice.id %>/pay">
+                          <input type="number" name="amount" min="1" step="0.01" placeholder="Amount" style="width: 100px" required />
+                          <select name="method" class="status-select">
+                            <option>Cash</option>
+                            <option>M-Pesa</option>
+                            <option>Card</option>
+                            <option>Bank Transfer</option>
+                          </select>
+                          <button class="btn btn-primary btn-sm" type="submit">Pay</button>
+                        </form>
+                      <% } else { %>
+                        <span class="empty-state">Settled</span>
+                      <% } %>
+                    </td>
+                    <% } %>
                   </tr>
                 <% }) %>
               </tbody>

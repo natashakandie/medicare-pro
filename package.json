@@ -1,23 +1,30 @@
 {
   "name": "medicare-pro",
-  "version": "1.0.0",
-  "description": "A polished hospital management system built with Node.js and Express",
+  "version": "1.1.0",
+  "description": "MediCore Pro: a hospital management system built with Node.js, Express, EJS and MySQL",
   "main": "hospital-management-system/server.js",
   "scripts": {
     "start": "node hospital-management-system/server.js",
     "dev": "nodemon hospital-management-system/server.js",
-    "test": "echo \"No tests configured\""
+    "db:setup": "node hospital-management-system/scripts/setup-db.js",
+    "db:healthcheck": "node hospital-management-system/scripts/healthcheck.js",
+    "test": "node --test hospital-management-system/test"
   },
   "keywords": [
     "hospital",
     "dashboard",
     "express",
-    "ejs"
+    "ejs",
+    "mysql"
   ],
   "author": "MediCore Pro",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "ejs": "^6.0.1",
     "express": "^5.2.1",

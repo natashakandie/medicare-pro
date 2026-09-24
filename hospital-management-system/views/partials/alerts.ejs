@@ -1,0 +1,14 @@
+<% if (typeof flash !== 'undefined' && flash.length) { %>
+  <% flash.forEach((item) => { %>
+    <div class="alert-box <%= item.type === 'error' ? 'danger' : 'success' %>">
+      <strong><%= item.type === 'error' ? 'Notice' : 'Success' %></strong>
+      <p><%= item.message %></p>
+    </div>
+  <% }) %>
+<% } %>
+<% if (typeof dbMessage !== 'undefined' && dbMessage) { %>
+  <div class="alert-box muted">
+    <strong>Database note</strong>
+    <p><%= dbMessage %></p>
+  </div>
+<% } %>

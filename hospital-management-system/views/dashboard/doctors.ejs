@@ -11,7 +11,7 @@
   </head>
   <body>
     <div class="page-shell">
-      <%- include('../partials/sidebar', { currentPage: 'doctors' }) %>
+      <%- include('../partials/sidebar') %>
       <main class="main-content">
         <header class="topbar">
           <div>
@@ -29,10 +29,9 @@
           <div class="hero-pill">Staff directory</div>
         </section>
 
-        <% if (successMessage) { %>
-          <div class="alert-box"><strong>Notice</strong><p><%= successMessage %></p></div>
-        <% } %>
+        <%- include('../partials/alerts') %>
 
+        <% if (typeof user !== 'undefined' && user && user.role === 'Admin') { %>
         <section class="form-card">
           <div class="panel-header">
             <h3>Add doctor</h3>
@@ -40,6 +39,8 @@
           <form class="form-grid" method="POST" action="/doctors">
             <label>Full name<input name="full_name" required /></label>
             <label>Specialty<input name="specialty" required /></label>
+            <label>Department<input name="department" /></label>
+            <label>Schedule<input name="schedule" placeholder="e.g. Mon, Wed, Fri" /></label>
             <label>Phone<input name="phone" /></label>
             <label>Email<input type="email" name="email" /></label>
             <div class="form-actions full-width">
@@ -47,6 +48,7 @@
             </div>
           </form>
         </section>
+        <% } %>
 
         <section class="panel">
           <div class="panel-header">
@@ -60,17 +62,28 @@
                   <tr>
                     <th>Name</th>
                     <th>Specialty</th>
+                    <th>Department</th>
+                    <th>Schedule</th>
                     <th>Phone</th>
                     <th>Email</th>
+                    <th>Appointments</th>
                   </tr>
                 </thead>
                 <tbody>
                   <% doctors.forEach((doctor) => { %>
                     <tr>
-                      <td><%= doctor.full_name %></td>
+                      <td>
+                        <div class="row-actions">
+                          <span class="avatar avatar-sm"><%= fmt.initials(doctor.full_name) %></span>
+                          <%= doctor.full_name %>
+                        </div>
+                      </td>
                       <td><%= doctor.specialty || '-' %></td>
+                      <td><%= doctor.department || '-' %></td>
+                      <td><%= doctor.schedule || '-' %></td>
                       <td><%= doctor.phone || '-' %></td>
                       <td><%= doctor.email || '-' %></td>
+                      <td><%= doctor.total_appointments || 0 %> total<% if (doctor.appointments_today) { %>, <%= doctor.appointments_today %> today<% } %></td>
                     </tr>
                   <% }) %>
                 </tbody>

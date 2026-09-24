@@ -11,24 +11,29 @@
   </head>
   <body>
     <div class="page-shell">
-      <%- include('../partials/sidebar', { currentPage: 'patients', user }) %>
+      <%- include('../partials/sidebar') %>
       <main class="main-content">
         <header class="topbar">
-          <div>
-            <p class="eyebrow">Electronic medical record</p>
-            <h1><%= patient.full_name %></h1>
+          <div class="row-actions">
+            <span class="avatar"><%= fmt.initials(patient.full_name) %></span>
+            <div>
+              <p class="eyebrow">Electronic medical record</p>
+              <h1><%= patient.full_name %></h1>
+            </div>
           </div>
           <a class="btn btn-secondary" href="/patients">Back to patients</a>
         </header>
+
+        <%- include('../partials/alerts') %>
 
         <section class="profile-grid">
           <article class="panel">
             <div class="panel-header">
               <h3>Patient profile</h3>
-              <span class="badge"><%= patient.patient_code %></span>
+              <span class="badge"><%= patient.patient_code || '-' %></span>
             </div>
             <dl class="detail-list">
-              <div><dt>Date of birth</dt><dd><%= patient.date_of_birth || '-' %></dd></div>
+              <div><dt>Date of birth</dt><dd><%= fmt.formatDate(patient.date_of_birth) %><% var age = fmt.ageFrom(patient.date_of_birth); %><% if (age !== null) { %> (<%= age %> yrs)<% } %></dd></div>
               <div><dt>Gender</dt><dd><%= patient.gender || '-' %></dd></div>
               <div><dt>Blood group</dt><dd><%= patient.blood_group || '-' %></dd></div>
               <div><dt>Phone</dt><dd><%= patient.phone || '-' %></dd></div>
@@ -40,15 +45,21 @@
 
           <article class="panel">
             <div class="panel-header">
-              <h3>Nurse vitals</h3>
-              <span class="status-pill">Latest</span>
+              <h3>Appointments</h3>
+              <a href="/appointments">Manage</a>
             </div>
-            <form class="form-grid compact-form">
-              <label>BP<input value="138/86" /></label>
-              <label>Temp<input value="36.9 C" /></label>
-              <label>Pulse<input value="78 bpm" /></label>
-              <label>Weight<input value="68 kg" /></label>
-            </form>
+            <ul class="activity-list">
+              <% if (appointments.length) { %>
+                <% appointments.forEach((appointment) => { %>
+                  <li>
+                    <span><%= fmt.formatDateTime(appointment.appointment_date) %> - <%= appointment.doctor_name %></span>
+                    <small><%= appointment.reason || 'No reason given' %> &bull; <span class="status-pill <%= appointment.status %>"><%= appointment.status %></span></small>
+                  </li>
+                <% }) %>
+              <% } else { %>
+                <li class="empty-row">No appointments on file.</li>
+              <% } %>
+            </ul>
           </article>
         </section>
 
@@ -59,13 +70,17 @@
               <span class="badge"><%= visits.length %> visits</span>
             </div>
             <ul class="activity-list">
-              <% visits.forEach((visit) => { %>
-                <li>
-                  <span><%= visit.date %> - <%= visit.doctor %></span>
-                  <small><%= visit.symptoms %> | <%= visit.diagnosis %></small>
-                  <p><%= visit.vitals %> | Prescription: <%= visit.prescription %></p>
-                </li>
-              <% }) %>
+              <% if (visits.length) { %>
+                <% visits.forEach((visit) => { %>
+                  <li>
+                    <span><%= fmt.formatDate(visit.created_at) %> - <%= visit.doctor_name || 'Unassigned' %></span>
+                    <small><%= visit.symptoms %><% if (visit.diagnosis) { %> | <%= visit.diagnosis %><% } %></small>
+                    <p><%= visit.vitals || 'No vitals recorded' %><% if (visit.notes) { %> | <%= visit.notes %><% } %></p>
+                  </li>
+                <% }) %>
+              <% } else { %>
+                <li class="empty-row">No visit notes on file.</li>
+              <% } %>
             </ul>
           </article>
 
@@ -77,7 +92,7 @@
             <ul class="activity-list">
               <% if (invoices.length) { %>
                 <% invoices.forEach((invoice) => { %>
-                  <li><span><%= invoice.invoice_code %></span><small>KES <%= invoice.total_amount %> &bull; <%= invoice.status %></small></li>
+                  <li><span><%= invoice.invoice_code %></span><small><%= fmt.formatMoney(invoice.total_amount) %> &bull; <span class="status-pill <%= invoice.status %>"><%= invoice.status %></span></small></li>
                 <% }) %>
               <% } else { %>
                 <li class="empty-row">No invoices for this patient.</li>

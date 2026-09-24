@@ -1,91 +1,78 @@
 # MediCore Pro
 
-A capstone-ready hospital management dashboard built with Node.js, Express, EJS, and MySQL. It follows the MediCore Pro prompt with role-based demo access, patient records, appointments, EMR-style patient detail pages, pharmacy inventory, billing, notifications, reports, and JSON API samples.
+A hospital management dashboard built with Node.js, Express, EJS, and MySQL. It
+has real authentication, role-based access control, and every page reads and
+writes from the database — patient records, appointments, pharmacy inventory,
+billing, and notifications all persist.
 
 ## Features
 
-- Operations dashboard with live patient, doctor, and appointment counts
-- Patient registration and patient directory
-- Patient detail pages with demographics, allergies, vitals, visit notes, prescriptions, and invoices
-- Doctor registration and staff directory
-- Appointment booking connected to patients and doctors
-- Pharmacy inventory with low-stock alerts and simulated dispensing
-- Billing dashboard with invoice/payment status and print action
-- Reports dashboard with revenue, appointment, medicine, and stock indicators
-- In-app notifications and account settings
-- Demo fallback data when MySQL is not connected, so the app can still be presented
-- JSON API samples for dashboard stats, patients, medicines, and notifications
-- Graceful empty states when the database is unavailable
-- Formal MySQL schema with sample records, indexes, foreign keys, EMR, pharmacy, billing, notifications, and reporting views
+- Session-based login with bcrypt-hashed passwords (no more "any password works")
+- Six roles (Admin, Doctor, Nurse, Receptionist, Pharmacist, Patient), each seeing
+  only the pages and actions their role permits
+- Patient directory with search, registration, and a full EMR-style detail page
+  (visits, diagnoses, prescriptions, appointments, invoices)
+- Doctor directory with live appointment counts per doctor
+- Appointment booking and status updates (scheduled / confirmed / completed / cancelled)
+- Pharmacy inventory with real stock deduction and an inventory log when medicine
+  is dispensed
+- Billing with partial/full payment recording that updates invoice status automatically
+- Reports dashboard driven by live SQL aggregates (revenue, appointment status
+  breakdown, stock levels, most-dispensed medicine)
+- Notifications with mark-as-read / mark-all-read
+- Account settings: update your name, change your password
+- Graceful demo-data fallback if MySQL is unreachable, so the UI still renders
+- `GET /health` for a quick database connectivity check
+- JSON API endpoints for dashboard stats, patients, medicines, notifications
 
 ## Setup
 
-1. Install dependencies from the project root:
+1. Install dependencies from the project root (one level up from this folder):
 
    ```bash
    npm install
    ```
 
-2. Create and seed the database:
+2. Copy the environment template and fill in your local MySQL/MariaDB credentials:
 
    ```bash
-   mysql -u root -p < hospital-management-system/database/hospital_management_system.sql
+   cp hospital-management-system/.env.example hospital-management-system/.env
    ```
 
-3. Optional: create a `.env` file in the project root or in `hospital-management-system`:
+   Set `SESSION_SECRET` to a long random string (generate one with
+   `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`)
+   and set `DB_PASSWORD` to your MySQL root (or dedicated app user) password.
 
-   ```env
-   PORT=3000
-   SESSION_SECRET=replace-this-secret
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=
-   DB_NAME=hospital_management_system
+3. Create and seed the database. This is safe to run any time — it only creates
+   what's missing and never duplicates seed rows:
+
+   ```bash
+   npm run db:setup
    ```
 
 4. Start the app:
 
    ```bash
+   npm run dev      # auto-restarts on file changes
+   # or
    npm start
    ```
 
-5. Open `http://localhost:3000`.
+5. Open `http://localhost:3000` and sign in (see demo accounts below).
 
-## Database Overview
-
-The database file at `database/hospital_management_system.sql` creates the capstone core tables:
-
-- `patients`, `doctors`, and `appointments` for registration and scheduling
-- `visits`, `prescriptions`, and `prescription_items` for EMR workflows
-- `medicines` and `inventory_logs` for pharmacy stock control
-- `invoices`, `invoice_items`, and `payments` for billing
-- `notifications` for in-app alerts
-
-It also adds useful indexes for dashboard lookups and four reporting views:
-
-- `appointment_overview` shows appointment details with patient and doctor names.
-- `daily_appointment_summary` groups appointments by day and status.
-- `doctor_schedule_summary` shows each doctor's workload and next appointment.
-- `patient_care_summary` shows visit history and upcoming visits per patient.
-
-Example presentation queries:
-
-```sql
-SELECT * FROM appointment_overview ORDER BY appointment_date DESC;
-SELECT * FROM daily_appointment_summary ORDER BY appointment_day DESC;
-SELECT * FROM doctor_schedule_summary ORDER BY doctor_name;
-SELECT * FROM patient_care_summary ORDER BY latest_visit DESC;
-```
-
-You can also run the prepared query set:
+To confirm the database connection independently at any time:
 
 ```bash
-mysql -u root -p < hospital-management-system/database/presentation_queries.sql
+npm run db:healthcheck
 ```
 
-## Demo Login
+### Deploying to cPanel
 
-Use any valid email and password on the login page. These sample accounts match the prompt and automatically select a role for local demos:
+See [DEPLOYMENT.md](DEPLOYMENT.md) for a full walkthrough: Node.js Selector
+setup, creating the database through cPanel's MySQL UI, importing the schema
+(or your real data) via phpMyAdmin, and environment variables.
+
+## Demo Login Accounts
 
 | Role | Email | Password |
 |---|---|---|
@@ -96,22 +83,63 @@ Use any valid email and password on the login page. These sample accounts match 
 | Pharmacist | `pharmacy@medicore.pro` | `Pharmacy@123` |
 | Patient | `patient@medicore.pro` | `Patient@123` |
 
-## Useful Routes
+Passwords are stored as bcrypt hashes in the `users` table — change them any
+time from the Settings page once signed in.
 
-- `/dashboard`
-- `/patients`
-- `/patients/1`
-- `/appointments`
-- `/doctors`
-- `/pharmacy`
-- `/billing`
-- `/reports`
-- `/notifications`
-- `/settings`
+## Role Access
 
-## API Samples
+| Page | Admin | Doctor | Nurse | Receptionist | Pharmacist | Patient |
+|---|---|---|---|---|---|---|
+| Dashboard | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Patients | ✔ | ✔ | ✔ | ✔ | — | — |
+| Appointments | ✔ | ✔ | ✔ | ✔ | — | view only |
+| Doctors | ✔ | view | view | view | — | view |
+| Pharmacy | ✔ | view | view | — | ✔ | — |
+| Billing | ✔ | — | — | ✔ | — | view |
+| Reports | ✔ | ✔ | — | — | ✔ | — |
 
-- `GET /api/dashboard/stats`
-- `GET /api/patients`
-- `GET /api/medicines`
-- `GET /api/notifications`
+Admins can always reach every page. Write actions (adding a patient, booking
+an appointment, dispensing medicine, recording a payment) are further
+restricted to the roles listed in `routes/index.js`.
+
+## Database Overview
+
+`database/hospital_management_system.sql` is idempotent: run it as many times
+as you like against an existing database and it will only add what's missing.
+It creates:
+
+- `users` — login accounts (bcrypt password hashes, role)
+- `patients`, `doctors`, `appointments` — registration and scheduling
+- `visits`, `prescriptions`, `prescription_items` — EMR workflow
+- `medicines`, `inventory_logs` — pharmacy stock control
+- `invoices`, `invoice_items`, `payments` — billing
+- `notifications` — in-app alerts
+
+Reporting views: `appointment_overview`, `daily_appointment_summary`,
+`doctor_schedule_summary`, `patient_care_summary`, `billing_summary`,
+`low_stock_medicines`. Example queries live in `database/presentation_queries.sql`.
+
+## Project Structure
+
+```
+config/db.js          MySQL connection pool + health check
+controllers/           Route handlers, one file per feature area
+middleware/             auth guard, flash messages, shared view locals, security headers
+lib/                    formatting helpers, role/permission table
+data/sample.js          demo data used only when the database is unreachable
+routes/index.js         all routes, wired to controllers with role guards
+scripts/setup-db.js     applies database/hospital_management_system.sql
+scripts/healthcheck.js  standalone DB connectivity check
+views/                  EJS templates
+public/                 static CSS/JS/images
+```
+
+## Security Notes
+
+- Never commit `.env`. It's already in `.gitignore`; use `.env.example` as the
+  template and keep real credentials local.
+- If this repository's `.env` was ever committed with a real database
+  password, treat that password as compromised: rotate it and scrub it from
+  git history.
+- Session cookies are `httpOnly`, `sameSite=lax`, and marked `secure` automatically
+  when `NODE_ENV=production` (requires HTTPS in that case).

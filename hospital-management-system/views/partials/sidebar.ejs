@@ -1,4 +1,9 @@
-<aside class="sidebar">
+<button class="mobile-nav-toggle" type="button" aria-label="Toggle menu" aria-controls="sidebar" aria-expanded="false">
+  <%- icon('menu') %>
+  <span>Menu</span>
+</button>
+
+<aside class="sidebar" id="sidebar">
   <div class="brand-block">
     <img
       class="brand-logo"
@@ -11,57 +16,38 @@
     </div>
   </div>
 
+  <form class="sidebar-search" action="/patients" method="GET">
+    <%- icon('search') %>
+    <input type="search" name="q" placeholder="Search patients..." />
+  </form>
+
   <nav class="nav-links">
-    <a
-      class="<%= currentPage === 'dashboard' ? 'active' : '' %>"
-      href="/dashboard"
-      >Overview</a
-    >
-    <a
-      class="<%= currentPage === 'patients' ? 'active' : '' %>"
-      href="/patients"
-      >Patients</a
-    >
-    <a
-      class="<%= currentPage === 'appointments' ? 'active' : '' %>"
-      href="/appointments"
-      >Appointments</a
-    >
-    <a
-      class="<%= currentPage === 'doctors' ? 'active' : '' %>"
-      href="/doctors"
-      >Doctors</a
-    >
-    <a
-      class="<%= currentPage === 'pharmacy' ? 'active' : '' %>"
-      href="/pharmacy"
-      >Pharmacy</a
-    >
-    <a
-      class="<%= currentPage === 'billing' ? 'active' : '' %>"
-      href="/billing"
-      >Billing</a
-    >
-    <a
-      class="<%= currentPage === 'reports' ? 'active' : '' %>"
-      href="/reports"
-      >Reports</a
-    >
-    <a
-      class="<%= currentPage === 'notifications' ? 'active' : '' %>"
-      href="/notifications"
-      >Notifications</a
-    >
-    <a
-      class="<%= currentPage === 'settings' ? 'active' : '' %>"
-      href="/settings"
-      >Settings</a
-    >
+    <% (typeof navPages !== 'undefined' ? navPages : []).forEach((page) => { %>
+      <a
+        class="<%= currentPath === page.href || currentPath.startsWith(page.href + '/') ? 'active' : '' %>"
+        href="<%= page.href %>"
+      >
+        <%- icon(page.key) %>
+        <span><%= page.label %></span>
+        <% if (page.key === 'notifications' && typeof unreadCount !== 'undefined' && unreadCount > 0) { %>
+          <span class="nav-badge"><%= unreadCount %></span>
+        <% } %>
+      </a>
+    <% }) %>
   </nav>
 
   <div class="sidebar-card">
-    <p><%= typeof user !== 'undefined' ? user.role : 'Admin' %> workspace</p>
-    <strong>Operational</strong>
-    <small>Secure care monitoring active</small>
+    <div class="sidebar-user">
+      <span class="avatar"><%= typeof user !== 'undefined' && user ? fmt.initials(user.name) : '?' %></span>
+      <div>
+        <strong><%= typeof user !== 'undefined' && user ? user.name : 'Guest' %></strong>
+        <small><%= typeof user !== 'undefined' && user ? user.role : '' %></small>
+      </div>
+    </div>
+    <a class="btn btn-secondary sidebar-logout" href="/logout">
+      <%- icon('logout') %>
+      <span>Logout</span>
+    </a>
   </div>
 </aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <%- include('../partials/sidebar') %>
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Access control</p>
+            <h1>Staff Accounts</h1>
+          </div>
+          <a class="btn btn-primary" href="/dashboard">Back to dashboard</a>
+        </header>
+
+        <section class="hero-card">
+          <div>
+            <h2>Register and manage login access</h2>
+            <p>Create accounts for doctors, nurses, receptionists and pharmacists. Registering a doctor also adds them to the doctor directory.</p>
+          </div>
+          <div class="hero-pill">Admin only</div>
+        </section>
+
+        <%- include('../partials/alerts') %>
+
+        <section class="form-card">
+          <div class="panel-header">
+            <h3>Register staff</h3>
+          </div>
+          <form class="form-grid" method="POST" action="/staff">
+            <label>Full name<input name="full_name" required /></label>
+            <label>Email<input type="email" name="email" required /></label>
+            <label>Temporary password<input type="password" name="password" minlength="8" required placeholder="At least 8 characters" /></label>
+            <label>Role
+              <select name="role" required>
+                <option value="">Select role</option>
+                <% roles.forEach((role) => { %>
+                  <option value="<%= role %>"><%= role %></option>
+                <% }) %>
+              </select>
+            </label>
+            <label>Phone<input name="phone" /></label>
+            <label>Specialty <small>(doctors only)</small><input name="specialty" placeholder="e.g. Cardiology" /></label>
+            <label>Department <small>(doctors only)</small><input name="department" /></label>
+            <label>Schedule <small>(doctors only)</small><input name="schedule" placeholder="e.g. Mon, Wed, Fri" /></label>
+            <div class="form-actions full-width">
+              <button class="btn btn-primary" type="submit">Register account</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h3>All accounts</h3>
+            <span class="badge"><%= staff.length %> accounts</span>
+          </div>
+          <% if (staff.length) { %>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Last login</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% staff.forEach((account) => { %>
+                    <tr>
+                      <td>
+                        <div class="row-actions">
+                          <span class="avatar avatar-sm"><%= fmt.initials(account.full_name) %></span>
+                          <%= account.full_name %>
+                          <% if (account.id === user.id) { %><span class="badge">You</span><% } %>
+                        </div>
+                      </td>
+                      <td><%= account.email %></td>
+                      <td><span class="badge"><%= account.role %></span></td>
+                      <td><span class="status-pill <%= account.is_active ? '' : 'danger' %>"><%= account.is_active ? 'Active' : 'Disabled' %></span></td>
+                      <td><%= account.last_login_at ? fmt.relativeTime(account.last_login_at) : 'Never' %></td>
+                      <td>
+                        <div class="row-actions">
+                          <form class="inline-form" method="POST" action="/staff/<%= account.id %>/reset-password" data-confirm="Set a new password for <%= account.full_name %>?">
+                            <input type="password" name="new_password" placeholder="New password" minlength="8" required />
+                            <button class="btn btn-secondary btn-sm" type="submit">Reset</button>
+                          </form>
+                          <% if (account.id !== user.id) { %>
+                            <form class="inline-form" method="POST" action="/staff/<%= account.id %>/status">
+                              <button class="btn <%= account.is_active ? 'btn-danger' : 'btn-secondary' %> btn-sm" type="submit">
+                                <%= account.is_active ? 'Disable' : 'Enable' %>
+                              </button>
+                            </form>
+                          <% } %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <p class="empty-state">No staff accounts found.</p>
+          <% } %>
+        </section>
+      </main>
+    </div>
+    <script src="/js/app.js"></script>
+  </body>
+</html>
